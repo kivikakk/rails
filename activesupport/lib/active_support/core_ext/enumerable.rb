@@ -227,15 +227,19 @@ module Enumerable
   #    Set.new.sole        # => Enumerable::SoleItemExpectedError: no item found
   #    { a: 1, b: 2 }.sole # => Enumerable::SoleItemExpectedError: multiple items found
   def sole
-    found, undesired = first(2)
+    it = nil
+    found = false
 
-    if found.nil?
-      raise SoleItemExpectedError, "no item found"
-    elsif undesired.present?
-      raise SoleItemExpectedError, "multiple items found"
-    else
-      found
+    each do |entry|
+      raise SoleItemExpectedError, "multiple items found" if found
+
+      it = entry
+      found = true
     end
+
+    raise SoleItemExpectedError, "no item found" unless found
+
+    it
   end
 end
 
